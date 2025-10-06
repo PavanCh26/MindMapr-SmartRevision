@@ -7,7 +7,7 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f0f4f8;
+        background-color: #eef4fb;
         margin: 0;
         padding: 0;
     }
@@ -46,13 +46,6 @@
         margin-top: 15px;
         min-height: 80px;
     }
-    input, textarea {
-        width: 100%;
-        padding: 8px;
-        margin: 6px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
 </style>
 </head>
 <body>
@@ -65,7 +58,7 @@
     <button onclick="addTopic()">➕ Add Topic</button>
     <button onclick="viewAll()">📘 View All Topics</button>
     <button onclick="searchTopic()">🔍 Search Topic</button>
-    <button onclick="quizMode()">🧩 Quiz Mode</button>
+    <button onclick="quizMode()">🧠 Quiz Mode</button>
     <button onclick="exitApp()">🚪 Exit</button>
 
     <div id="output"></div>
@@ -73,6 +66,19 @@
 
 <script>
 let data = JSON.parse(localStorage.getItem('mindmaprData') || '{}');
+
+// preload some example ECE topics if none exist
+if (Object.keys(data).length === 0) {
+    data = {
+        "Digital Electronics": ["Logic Gates", "Flip-Flops", "Boolean Algebra"],
+        "Signals and Systems": ["Fourier Transform", "Convolution", "LTI System"],
+        "Microprocessors": ["8085 Architecture", "Addressing Modes", "Instruction Set"],
+        "Communication Systems": ["AM & FM", "Modulation", "Noise Analysis"],
+        "Control Systems": ["Block Diagram", "Transfer Function", "Feedback"],
+        "Electromagnetics": ["Coulomb’s Law", "Faraday’s Law", "Maxwell’s Equations"]
+    };
+    localStorage.setItem('mindmaprData', JSON.stringify(data));
+}
 
 function saveData() {
     localStorage.setItem('mindmaprData', JSON.stringify(data));
@@ -121,22 +127,28 @@ function searchTopic() {
 }
 
 function quizMode() {
-    const keys = Object.keys(data);
-    if (keys.length === 0) {
+    const topics = Object.keys(data);
+    if (topics.length === 0) {
         document.getElementById('output').innerHTML = "No data available for quiz.";
         return;
     }
-    const topic = keys[Math.floor(Math.random() * keys.length)];
-    const points = data[topic];
-    const point = points[Math.floor(Math.random() * points.length)];
-    document.getElementById('output').innerHTML = `<h3>🧩 Topic: ${topic}</h3><p>Press OK to see hint...</p>`;
-    alert(`💡 Hint: ${point}`);
+    // pick random topic and random point
+    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    const points = data[randomTopic];
+    const randomPoint = points[Math.floor(Math.random() * points.length)];
+
+    const userAnswer = prompt(`🧠 Quiz Time!\nWhich topic does this concept belong to?\n\nConcept: "${randomPoint}"`);
+    if (userAnswer === null) return;
+
+    if (userAnswer.trim().toLowerCase() === randomTopic.toLowerCase()) {
+        alert(`✅ Correct! "${randomPoint}" belongs to "${randomTopic}".`);
+    } else {
+        alert(`❌ Wrong! "${randomPoint}" belongs to "${randomTopic}".`);
+    }
 }
 
 function exitApp() {
-    if (confirm("Are you sure you want to exit?")) {
-        document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
-    }
+    document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
 }
 </script>
 
