@@ -6,22 +6,46 @@
 <title>MindMapr – Smart Revision Assistant</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
         margin: 20px;
-        background-color: #f4f4f4;
     }
     h1 {
         color: #1a73e8;
+        text-align: center;
     }
-    h2 {
-        color: #2a2a2a;
+    .menu {
+        max-width: 500px;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
     }
-    ol {
-        padding-left: 20px;
+    .menu h2 {
+        text-align: center;
+        color: #333;
     }
-    li {
-        margin: 5px 0;
-        padding: 5px;
+    .menu ul {
+        list-style: none;
+        padding: 0;
+    }
+    .menu li {
+        background: #e7f0fd;
+        margin: 10px 0;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: default;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .menu li:hover {
+        background: #d0e2fc;
+    }
+    .note {
+        text-align: center;
+        margin-top: 20px;
+        color: #555;
     }
 </style>
 </head>
@@ -29,16 +53,17 @@
 
 <h1>MindMapr – Smart Revision Assistant</h1>
 
-<h2>Console Menu:</h2>
-<ol>
-    <li>Add Topic</li>
-    <li>View All Topics</li>
-    <li>Search Topic</li>
-    <li>Quiz Mode</li>
-    <li>Exit</li>
-</ol>
-
-<p><strong>Note:</strong> This HTML page is static. To use the application, run <code>mindmapr.py</code> in a Python environment.</p>
+<div class="menu">
+    <h2>Console Menu (Visual UI)</h2>
+    <ul>
+        <li>1. Add Topic</li>
+        <li>2. View All Topics</li>
+        <li>3. Search Topic</li>
+        <li>4. Quiz Mode</li>
+        <li>5. Exit</li>
+    </ul>
+    <p class="note">This is a visual UI representation only.<br>To use the app interactively, run <code>mindmapr.py</code> in Python.</p>
+</div>
 
 </body>
 </html>
