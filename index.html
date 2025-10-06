@@ -5,104 +5,186 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindMapr – Smart Revision Assistant</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #eef4fb;
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        background-color: #1a73e8;
-        color: white;
-        text-align: center;
-        padding: 20px;
-    }
-    .container {
-        max-width: 600px;
-        margin: 30px auto;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
-    }
-    button {
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin: 5px 0;
-        width: 100%;
-    }
-    button:hover {
-        background-color: #155fc4;
-    }
-    #output {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 10px;
-        margin-top: 15px;
-        min-height: 80px;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #eef4fb;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background-color: #1a73e8;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+  }
+  button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 5px 0;
+    width: 100%;
+  }
+  button:hover {
+    background-color: #155fc4;
+  }
+  #output {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+    min-height: 100px;
+  }
+  .option-btn {
+    display: block;
+    background-color: #f1f3f4;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .option-btn:hover {
+    background-color: #e0ebff;
+  }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>MindMapr – Smart Revision Assistant</h1>
+  <h1>MindMapr – Smart Revision Assistant</h1>
 </header>
 
 <div class="container">
-    <button onclick="addTopic()">➕ Add Topic</button>
-    <button onclick="viewAll()">📘 View All Topics</button>
-    <button onclick="searchTopic()">🔍 Search Topic</button>
-    <button onclick="quizMode()">🧠 Quiz Mode</button>
-    <button onclick="exitApp()">🚪 Exit</button>
+  <button onclick="addTopic()">➕ Add Topic</button>
+  <button onclick="viewAll()">📘 View All Topics</button>
+  <button onclick="searchTopic()">🔍 Search Topic</button>
+  <button onclick="quizMode()">🧩 Quiz Mode</button>
+  <button onclick="exitApp()">🚪 Exit</button>
 
-    <div id="output"></div>
+  <div id="output"></div>
 </div>
 
 <script>
 let data = JSON.parse(localStorage.getItem('mindmaprData') || '{}');
 
-// preload some example ECE topics if none exist
+// preload ECE data if empty
 if (Object.keys(data).length === 0) {
-    data = {
-        "Digital Electronics": ["Logic Gates", "Flip-Flops", "Boolean Algebra"],
-        "Signals and Systems": ["Fourier Transform", "Convolution", "LTI System"],
-        "Microprocessors": ["8085 Architecture", "Addressing Modes", "Instruction Set"],
-        "Communication Systems": ["AM & FM", "Modulation", "Noise Analysis"],
-        "Control Systems": ["Block Diagram", "Transfer Function", "Feedback"],
-        "Electromagnetics": ["Coulomb’s Law", "Faraday’s Law", "Maxwell’s Equations"]
-    };
-    localStorage.setItem('mindmaprData', JSON.stringify(data));
+  data = {
+    "Digital Electronics": ["Logic Gates", "Flip-Flops", "Boolean Algebra", "Multiplexers"],
+    "Signals and Systems": ["Fourier Transform", "Convolution", "LTI System", "Laplace Transform"],
+    "Microprocessors": ["8085 Architecture", "Addressing Modes", "Instruction Set", "Stack Pointer"],
+    "Communication Systems": ["AM & FM", "Modulation", "Noise Analysis", "Bandwidth"],
+    "Control Systems": ["Block Diagram", "Transfer Function", "Feedback", "Stability Analysis"],
+    "Electromagnetics": ["Coulomb’s Law", "Faraday’s Law", "Maxwell’s Equations", "Magnetic Fields"]
+  };
+  localStorage.setItem('mindmaprData', JSON.stringify(data));
 }
 
 function saveData() {
-    localStorage.setItem('mindmaprData', JSON.stringify(data));
+  localStorage.setItem('mindmaprData', JSON.stringify(data));
 }
 
 function addTopic() {
-    const topic = prompt("Enter topic name:");
-    if (!topic) return alert("Topic name cannot be empty!");
-    let points = [];
-    while (true) {
-        const point = prompt("Add key point (or type 'done' to finish):");
-        if (point === null || point.toLowerCase() === 'done') break;
-        if (point.trim()) points.push(point.trim());
-    }
-    if (!points.length) return;
-    data[topic] = (data[topic] || []).concat(points);
-    saveData();
-    alert(`✅ Saved ${points.length} points for '${topic}'`);
+  const topic = prompt("Enter topic name:");
+  if (!topic) return alert("Topic name cannot be empty!");
+  let points = [];
+  while (true) {
+    const point = prompt("Add key point (or type 'done' to finish):");
+    if (point === null || point.toLowerCase() === 'done') break;
+    if (point.trim()) points.push(point.trim());
+  }
+  if (!points.length) return;
+  data[topic] = (data[topic] || []).concat(points);
+  saveData();
+  alert(`✅ Saved ${points.length} points for '${topic}'`);
 }
 
 function viewAll() {
-    if (Object.keys(data).length === 0) {
-        document.getElementById('output').innerHTML = "No topics added yet.";
-        return;
+  if (Object.keys(data).length === 0) {
+    document.getElementById('output').innerHTML = "No topics added yet.";
+    return;
+  }
+  let html = "";
+  for (let topic in data) {
+    html += `<h3>📘 ${topic}</h3><ul>`;
+    data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
+    html += "</ul>";
+  }
+  document.getElementById('output').innerHTML = html;
+}
+
+function searchTopic() {
+  const topic = prompt("Enter topic name to search:");
+  if (!topic) return;
+  if (data[topic]) {
+    let html = `<h3>📗 ${topic}</h3><ul>`;
+    data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
+    html += "</ul>";
+    document.getElementById('output').innerHTML = html;
+  } else {
+    document.getElementById('output').innerHTML = "Topic not found!";
+  }
+}
+
+function quizMode() {
+  const topics = Object.keys(data);
+  if (topics.length === 0) {
+    document.getElementById('output').innerHTML = "No data available for quiz.";
+    return;
+  }
+
+  // Choose random topic and random point
+  const correctTopic = topics[Math.floor(Math.random() * topics.length)];
+  const points = data[correctTopic];
+  const randomPoint = points[Math.floor(Math.random() * points.length)];
+
+  // Prepare 4 random options
+  let options = [correctTopic];
+  while (options.length < 4) {
+    const rand = topics[Math.floor(Math.random() * topics.length)];
+    if (!options.includes(rand)) options.push(rand);
+  }
+
+  // Shuffle options
+  options = options.sort(() => Math.random() - 0.5);
+
+  // Display question
+  let html = `<h3>🧩 Which topic does this concept belong to?</h3>`;
+  html += `<p><b>Hint:</b> "${randomPoint}"</p>`;
+  options.forEach(opt => {
+    html += `<div class="option-btn" onclick="checkAnswer('${opt}','${correctTopic}')">${opt}</div>`;
+  });
+  document.getElementById('output').innerHTML = html;
+}
+
+function checkAnswer(selected, correct) {
+  if (selected === correct) {
+    alert(`✅ Correct! "${correct}" is the right topic.`);
+  } else {
+    alert(`❌ Wrong! Correct answer: "${correct}".`);
+  }
+  quizMode(); // automatically load next question
+}
+
+function exitApp() {
+  document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
+}
+</script>
+
+</body>
+</html>
     }
     let html = "";
     for (let topic in data) {
