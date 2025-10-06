@@ -6,64 +6,139 @@
 <title>MindMapr – Smart Revision Assistant</title>
 <style>
     body {
-        font-family: 'Arial', sans-serif;
+        font-family: Arial, sans-serif;
         background-color: #f0f4f8;
-        margin: 20px;
+        margin: 0;
+        padding: 0;
     }
-    h1 {
-        color: #1a73e8;
+    header {
+        background-color: #1a73e8;
+        color: white;
         text-align: center;
+        padding: 20px;
     }
-    .menu {
-        max-width: 500px;
+    .container {
+        max-width: 600px;
         margin: 30px auto;
-        background-color: #fff;
+        background: #fff;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
     }
-    .menu h2 {
-        text-align: center;
-        color: #333;
+    button {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px 0;
+        width: 100%;
     }
-    .menu ul {
-        list-style: none;
-        padding: 0;
+    button:hover {
+        background-color: #155fc4;
     }
-    .menu li {
-        background: #e7f0fd;
-        margin: 10px 0;
-        padding: 12px;
-        border-radius: 8px;
-        cursor: default;
-        font-weight: bold;
-        transition: 0.3s;
+    #output {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        margin-top: 15px;
+        min-height: 80px;
     }
-    .menu li:hover {
-        background: #d0e2fc;
-    }
-    .note {
-        text-align: center;
-        margin-top: 20px;
-        color: #555;
+    input, textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 6px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
     }
 </style>
 </head>
 <body>
 
-<h1>MindMapr – Smart Revision Assistant</h1>
+<header>
+    <h1>MindMapr – Smart Revision Assistant</h1>
+</header>
 
-<div class="menu">
-    <h2>Console Menu (Visual UI)</h2>
-    <ul>
-        <li>1. Add Topic</li>
-        <li>2. View All Topics</li>
-        <li>3. Search Topic</li>
-        <li>4. Quiz Mode</li>
-        <li>5. Exit</li>
-    </ul>
-    <p class="note">This is a visual UI representation only.<br>To use the app interactively, run <code>mindmapr.py</code> in Python.</p>
+<div class="container">
+    <button onclick="addTopic()">➕ Add Topic</button>
+    <button onclick="viewAll()">📘 View All Topics</button>
+    <button onclick="searchTopic()">🔍 Search Topic</button>
+    <button onclick="quizMode()">🧩 Quiz Mode</button>
+    <button onclick="exitApp()">🚪 Exit</button>
+
+    <div id="output"></div>
 </div>
+
+<script>
+let data = JSON.parse(localStorage.getItem('mindmaprData') || '{}');
+
+function saveData() {
+    localStorage.setItem('mindmaprData', JSON.stringify(data));
+}
+
+function addTopic() {
+    const topic = prompt("Enter topic name:");
+    if (!topic) return alert("Topic name cannot be empty!");
+    let points = [];
+    while (true) {
+        const point = prompt("Add key point (or type 'done' to finish):");
+        if (point === null || point.toLowerCase() === 'done') break;
+        if (point.trim()) points.push(point.trim());
+    }
+    if (!points.length) return;
+    data[topic] = (data[topic] || []).concat(points);
+    saveData();
+    alert(`✅ Saved ${points.length} points for '${topic}'`);
+}
+
+function viewAll() {
+    if (Object.keys(data).length === 0) {
+        document.getElementById('output').innerHTML = "No topics added yet.";
+        return;
+    }
+    let html = "";
+    for (let topic in data) {
+        html += `<h3>📘 ${topic}</h3><ul>`;
+        data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
+        html += "</ul>";
+    }
+    document.getElementById('output').innerHTML = html;
+}
+
+function searchTopic() {
+    const topic = prompt("Enter topic name to search:");
+    if (!topic) return;
+    if (data[topic]) {
+        let html = `<h3>📗 ${topic}</h3><ul>`;
+        data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
+        html += "</ul>";
+        document.getElementById('output').innerHTML = html;
+    } else {
+        document.getElementById('output').innerHTML = "Topic not found!";
+    }
+}
+
+function quizMode() {
+    const keys = Object.keys(data);
+    if (keys.length === 0) {
+        document.getElementById('output').innerHTML = "No data available for quiz.";
+        return;
+    }
+    const topic = keys[Math.floor(Math.random() * keys.length)];
+    const points = data[topic];
+    const point = points[Math.floor(Math.random() * points.length)];
+    document.getElementById('output').innerHTML = `<h3>🧩 Topic: ${topic}</h3><p>Press OK to see hint...</p>`;
+    alert(`💡 Hint: ${point}`);
+}
+
+function exitApp() {
+    if (confirm("Are you sure you want to exit?")) {
+        document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
+    }
+}
+</script>
 
 </body>
 </html>
