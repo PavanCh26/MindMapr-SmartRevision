@@ -35,189 +35,34 @@
 let data = JSON.parse(localStorage.getItem('mindmaprData') || '{}');
 
 function saveData() {
-  localStorage.setItem('mindmaprData', JSON.stringify(data));
+    localStorage.setItem('mindmaprData', JSON.stringify(data));
 }
 
 function addTopic() {
-  const topic = prompt("Enter topic name:");
-  if (!topic) return alert("Topic name cannot be empty!");
-  let points = [];
-  while (true) {
-    const point = prompt("Add key point (or type 'done' to finish):");
-    if (point === null || point.toLowerCase() === 'done') break;
-    if (point.trim()) points.push(point.trim());
-  }
-  if (points.length === 0) return alert("No points added!");
-  data[topic] = (data[topic] || []).concat(points);
-  saveData();
-  alert("✅ Saved " + points.length + " points for '" + topic + "'");
+    const topic = prompt("Enter topic name:");
+    if (!topic) return alert("Topic name cannot be empty!");
+    let points = [];
+    while (true) {
+        const point = prompt("Add key point (or type 'done' to finish):");
+        if (point === null || point.toLowerCase() === 'done') break;
+        if (point.trim()) points.push(point.trim());
+    }
+    if (!points.length) return alert("No points added!");
+    data[topic] = (data[topic] || []).concat(points);
+    saveData();
+    alert(`✅ Saved ${points.length} points for '${topic}'`);
 }
 
 function viewAll() {
-  if (Object.keys(data).length === 0) {
-    document.getElementById('output').innerHTML = "No topics added yet.";
-    return;
-  }
-  let html = "";
-  for (let topic in data) {
-    html += `<h3>📘 ${topic}</h3><ul>`;
-    data[topic].forEach((p, i) => {
-      html += `<li>${i + 1}. ${p}</li>`;
-    });
-    html += `</ul>`;
-  }
-  document.getElementById('output').innerHTML = html;
-}
-
-function searchTopic() {
-  const topic = prompt("Enter topic name to search:");
-  if (!topic) return;
-  if (data[topic]) {
-    let html = `<h3>📗 ${topic}</h3><ul>`;
-    data[topic].forEach((p, i) => {
-      html += `<li>${i + 1}. ${p}</li>`;
-    });
-    html += `</ul>`;
-    document.getElementById('output').innerHTML = html;
-  } else {
-    document.getElementById('output').innerHTML = "Topic not found!";
-  }
-}
-
-function quizMode() {
-  const topics = Object.keys(data);
-  if (topics.length < 2) {
-    document.getElementById('output').innerHTML = "Add at least 2 topics to start quiz mode.";
-    return;
-  }
-
-  const correctTopic = topics[Math.floor(Math.random() * topics.length)];
-  const points = data[correctTopic];
-  const hint = points[Math.floor(Math.random() * points.length)];
-
-  let options = [correctTopic];
-  while (options.length < 4 && options.length < topics.length) {
-    const rand = topics[Math.floor(Math.random() * topics.length)];
-    if (!options.includes(rand)) options.push(rand);
-  }
-  options.sort(() => Math.random() - 0.5);
-
-  let html = `<h3>🧠 Which subject does this concept belong to?</h3>`;
-  html += `<p><b>Hint:</b> ${hint}</p>`;
-  options.forEach(function(opt) {
-    html += `<div class='option-btn' onclick="checkAnswer('${opt}','${correctTopic}')">${opt}</div>`;
-  });
-  document.getElementById('output').innerHTML = html;
-}
-
-function checkAnswer(selected, correct) {
-  if (selected === correct) {
-    alert("✅ Correct! '" + correct + "' is the right subject.");
-  } else {
-    alert("❌ Wrong! Correct answer: " + correct);
-  }
-  quizMode();
-}
-
-function clearData() {
-  if (confirm("Are you sure you want to clear all data?")) {
-    localStorage.removeItem('mindmaprData');
-    data = {};
-    document.getElementById('output').innerHTML = "All data cleared.";
-  }
-}
-</script>
-
-</body>
-</html>
-    if (point.trim()) points.push(point.trim());
-  }
-  if (!points.length) return;
-  data[topic] = (data[topic] || []).concat(points);
-  saveData();
-  alert(`✅ Saved ${points.length} points for '${topic}'`);
-}
-
-function viewAll() {
-  if (Object.keys(data).length === 0) {
-    document.getElementById('output').innerHTML = "No topics added yet.";
-    return;
-  }
-  let html = "";
-  for (let topic in data) {
-    html += `<h3>📘 ${topic}</h3><ul>`;
-    data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
-    html += "</ul>";
-  }
-  document.getElementById('output').innerHTML = html;
-}
-
-function searchTopic() {
-  const topic = prompt("Enter topic name to search:");
-  if (!topic) return;
-  if (data[topic]) {
-    let html = `<h3>📗 ${topic}</h3><ul>`;
-    data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
-    html += "</ul>";
-    document.getElementById('output').innerHTML = html;
-  } else {
-    document.getElementById('output').innerHTML = "Topic not found!";
-  }
-}
-
-function quizMode() {
-  const topics = Object.keys(data);
-  if (topics.length === 0) {
-    document.getElementById('output').innerHTML = "No data available for quiz.";
-    return;
-  }
-
-  // Choose random topic and random point
-  const correctTopic = topics[Math.floor(Math.random() * topics.length)];
-  const points = data[correctTopic];
-  const randomPoint = points[Math.floor(Math.random() * points.length)];
-
-  // Prepare 4 random options
-  let options = [correctTopic];
-  while (options.length < 4) {
-    const rand = topics[Math.floor(Math.random() * topics.length)];
-    if (!options.includes(rand)) options.push(rand);
-  }
-
-  // Shuffle options
-  options = options.sort(() => Math.random() - 0.5);
-
-  // Display question
-  let html = `<h3>🧩 Which topic does this concept belong to?</h3>`;
-  html += `<p><b>Hint:</b> "${randomPoint}"</p>`;
-  options.forEach(opt => {
-    html += `<div class="option-btn" onclick="checkAnswer('${opt}','${correctTopic}')">${opt}</div>`;
-  });
-  document.getElementById('output').innerHTML = html;
-}
-
-function checkAnswer(selected, correct) {
-  if (selected === correct) {
-    alert(`✅ Correct! "${correct}" is the right topic.`);
-  } else {
-    alert(`❌ Wrong! Correct answer: "${correct}".`);
-  }
-  quizMode(); // automatically load next question
-}
-
-function exitApp() {
-  document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
-}
-</script>
-
-</body>
-</html>
+    if (Object.keys(data).length === 0) {
+        document.getElementById('output').innerHTML = "No topics added yet.";
+        return;
     }
     let html = "";
     for (let topic in data) {
         html += `<h3>📘 ${topic}</h3><ul>`;
         data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
-        html += "</ul>";
+        html += `</ul>`;
     }
     document.getElementById('output').innerHTML = html;
 }
@@ -228,7 +73,7 @@ function searchTopic() {
     if (data[topic]) {
         let html = `<h3>📗 ${topic}</h3><ul>`;
         data[topic].forEach((p, i) => html += `<li>${i + 1}. ${p}</li>`);
-        html += "</ul>";
+        html += `</ul>`;
         document.getElementById('output').innerHTML = html;
     } else {
         document.getElementById('output').innerHTML = "Topic not found!";
@@ -237,27 +82,46 @@ function searchTopic() {
 
 function quizMode() {
     const topics = Object.keys(data);
-    if (topics.length === 0) {
-        document.getElementById('output').innerHTML = "No data available for quiz.";
+    if (topics.length < 2) {
+        document.getElementById('output').innerHTML = "Add at least 2 topics to start quiz mode.";
         return;
     }
-    // pick random topic and random point
-    const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-    const points = data[randomTopic];
-    const randomPoint = points[Math.floor(Math.random() * points.length)];
 
-    const userAnswer = prompt(`🧠 Quiz Time!\nWhich topic does this concept belong to?\n\nConcept: "${randomPoint}"`);
-    if (userAnswer === null) return;
+    const correctTopic = topics[Math.floor(Math.random() * topics.length)];
+    const points = data[correctTopic];
+    const hint = points[Math.floor(Math.random() * points.length)];
 
-    if (userAnswer.trim().toLowerCase() === randomTopic.toLowerCase()) {
-        alert(`✅ Correct! "${randomPoint}" belongs to "${randomTopic}".`);
-    } else {
-        alert(`❌ Wrong! "${randomPoint}" belongs to "${randomTopic}".`);
+    let options = [correctTopic];
+    while (options.length < 4 && options.length < topics.length) {
+        const rand = topics[Math.floor(Math.random() * topics.length)];
+        if (!options.includes(rand)) options.push(rand);
     }
+    options.sort(() => Math.random() - 0.5);
+
+    let html = `<h3>🧠 Which topic does this concept belong to?</h3>`;
+    html += `<p><b>Hint:</b> ${hint}</p>`;
+    options.forEach(opt => {
+        html += `<div class='option-btn' onclick="checkAnswer('${opt}','${correctTopic}')">${opt}</div>`;
+    });
+
+    document.getElementById('output').innerHTML = html;
 }
 
-function exitApp() {
-    document.getElementById('output').innerHTML = "Goodbye 👋 Keep Revising!";
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        alert(`✅ Correct! "${correct}" is the right topic.`);
+    } else {
+        alert(`❌ Wrong! Correct answer: "${correct}".`);
+    }
+    quizMode(); // automatically load next question
+}
+
+function clearData() {
+    if (confirm("Are you sure you want to clear all data?")) {
+        localStorage.removeItem('mindmaprData');
+        data = {};
+        document.getElementById('output').innerHTML = "All data cleared.";
+    }
 }
 </script>
 
